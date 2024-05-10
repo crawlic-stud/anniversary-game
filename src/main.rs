@@ -317,9 +317,9 @@ async fn game() {
 
     let mut font_index = 0;
     let mut window_size = screen_size();
-    let rotation_step = 0.025;
+    let rotation_step = 0.015;
 
-    let y_offset = 150.0;
+    let y_offset = 200.0;
     let star_image = load_image("images/star.png").await.unwrap();
     let star_texture = Texture2D::from_image(&star_image);
     let heart_image = load_image("images/heart.png").await.unwrap();
@@ -372,7 +372,14 @@ async fn game() {
                 a: 1.0,
             },
             texture: &present_texture,
-            texts: vec!["У меня даже есть", "для тебя!!!", "подарок!!!"],
+            texts: vec![
+                "У меня даже есть",
+                "для тебя!!!",
+                "подарок!!!",
+                "Но сначала я хочу",
+                "сказать тебе",
+                "какая ты ...",
+            ],
             text_colors: (BLACK, WHITE),
             colors: generate_colors(STARS_AMOUNT, (900.0, 1000.0), 500.0, (true, true, false)),
         },
@@ -385,7 +392,7 @@ async fn game() {
                 a: 1.0,
             },
             texture: &flower_white_texture,
-            texts: vec!["Но сначала я хочу", "сказать тебе", "какая ты ..."],
+            texts: vec!["Замечательная!", "Умная! Красивая!", "Добрая! Милая!", ""],
             text_colors: (WHITE, BLACK),
             colors: generate_colors(HEARTS_AMOUNT, (700.0, 1000.0), 1000.0, (false, false, true)),
         },
@@ -399,9 +406,6 @@ async fn game() {
             },
             texture: &flower_blue_texture,
             texts: vec![
-                "Замечательная!",
-                "Умная! Красивая!",
-                "Добрая! Милая!",
                 "Гениальная!",
                 "Душещипательная!",
                 "Восхитительная!",
@@ -446,7 +450,7 @@ async fn game() {
                 "Если бы не ты",
                 "я б так и был",
                 "холостым (фуууу)",
-                "и одиноким :(((",
+                "и одиноким :(",
             ],
             text_colors: (BLACK, WHITE),
             colors: generate_colors(HEARTS_AMOUNT, (850.0, 1000.0), 1000.0, (true, true, true)),
@@ -462,10 +466,11 @@ async fn game() {
             texture: &sun_texture,
             texts: vec![
                 "ТЫ МОЕ СОЛНЫШКО!!!",
-                "я тобой очень сильно",
-                "горжусь!",
+                "я очень сильно",
+                "горжусь тобой!",
                 "И не устаю",
-                "тобой удивляться!!!",
+                "удивляться своей удаче",
+                "каждый день!!!",
             ],
             text_colors: (BLACK, WHITE),
             colors: generate_colors(HEARTS_AMOUNT, (999.0, 1000.0), 500.0, (true, true, true)),
