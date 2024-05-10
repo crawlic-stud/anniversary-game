@@ -29,10 +29,10 @@ enum WhatDraw {
     Stars,
 }
 
-struct SceneConfig<'a> {
+struct SceneConfig {
     what_draw: WhatDraw,
     bg_color: Color,
-    texture: &'a Texture2D,
+    texture: Texture2D,
     texts: Vec<&'static str>,
     text_colors: (Color, Color),
     colors: Vec<Color>,
@@ -331,18 +331,6 @@ async fn game() {
 
     let mut scene_index = 0;
 
-    // TEXTURES
-    let flower_texture = Texture2D::from_image(&load_image("images/flower.png").await.unwrap());
-    let present_texture = Texture2D::from_image(&load_image("images/present.png").await.unwrap());
-    let flower_white_texture =
-        Texture2D::from_image(&load_image("images/flower-white.png").await.unwrap());
-    let flower_blue_texture =
-        Texture2D::from_image(&load_image("images/flower-blue.png").await.unwrap());
-    let flower_red_texture =
-        Texture2D::from_image(&load_image("images/flower-red.png").await.unwrap());
-    let sad_texture = Texture2D::from_image(&load_image("images/sad.png").await.unwrap());
-    let sun_texture = Texture2D::from_image(&load_image("images/sun.png").await.unwrap());
-
     let scenes = vec![
         SceneConfig {
             what_draw: WhatDraw::Hearts,
@@ -352,12 +340,12 @@ async fn game() {
                 b: 0.1,
                 a: 1.0,
             },
-            texture: &flower_texture,
+            texture: Texture2D::from_image(&load_image("images/flower.png").await.unwrap()),
             texts: vec![
                 "Азалька!",
                 "я тебя очень",
                 "сильно люблю!",
-                "(нажимай на цветочек)",
+                "(жми на цветочек)",
             ],
             text_colors: (WHITE, BLACK),
             colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, false)),
@@ -370,7 +358,7 @@ async fn game() {
                 b: 0.9,
                 a: 1.0,
             },
-            texture: &present_texture,
+            texture: Texture2D::from_image(&load_image("images/present.png").await.unwrap()),
             texts: vec![
                 "У меня даже есть",
                 "для тебя!!!",
@@ -390,7 +378,7 @@ async fn game() {
                 b: 1.0,
                 a: 1.0,
             },
-            texture: &flower_white_texture,
+            texture: Texture2D::from_image(&load_image("images/flower-white.png").await.unwrap()),
             texts: vec!["Замечательная!", "Умная! Красивая!", "Добрая! Милая!", ""],
             text_colors: (WHITE, BLACK),
             colors: generate_colors(HEARTS_AMOUNT, (700.0, 1000.0), 1000.0, (false, false, true)),
@@ -403,7 +391,7 @@ async fn game() {
                 b: 1.0,
                 a: 1.0,
             },
-            texture: &flower_blue_texture,
+            texture: Texture2D::from_image(&load_image("images/flower-blue.png").await.unwrap()),
             texts: vec![
                 "Гениальная!",
                 "Душещипательная!",
@@ -422,7 +410,7 @@ async fn game() {
                 b: 0.65,
                 a: 1.0,
             },
-            texture: &flower_red_texture,
+            texture: Texture2D::from_image(&load_image("images/flower-red.png").await.unwrap()),
 
             texts: vec![
                 "Я так рад,",
@@ -443,7 +431,7 @@ async fn game() {
                 b: 0.7,
                 a: 1.0,
             },
-            texture: &sad_texture,
+            texture: Texture2D::from_image(&load_image("images/sad.png").await.unwrap()),
 
             texts: vec![
                 "Если бы не ты",
@@ -462,7 +450,7 @@ async fn game() {
                 b: 1.0,
                 a: 1.0,
             },
-            texture: &sun_texture,
+            texture: Texture2D::from_image(&load_image("images/sun.png").await.unwrap()),
             texts: vec![
                 "ТЫ МОЕ СОЛНЫШКО!!!",
                 "я очень сильно",
@@ -474,7 +462,25 @@ async fn game() {
             text_colors: (BLACK, WHITE),
             colors: generate_colors(HEARTS_AMOUNT, (999.0, 1000.0), 500.0, (true, true, true)),
         },
-        // SceneConfig {},
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
+                g: 0.3,
+                b: 0.2,
+                a: 1.0,
+            },
+            texture: Texture2D::from_image(&load_image("images/old.png").await.unwrap()),
+            texts: vec![
+                "Давай посмотрим",
+                "немного на нас!",
+                "вот наша фотка",
+                "с еще совсем",
+                "давних времен:",
+            ],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
+        },
     ];
 
     let mut hearts: Vec<Heart> = recreate_hearts(window_size, &scenes[scene_index].colors);
@@ -502,7 +508,7 @@ async fn game() {
                 scene_index += 1;
                 let new_scene = &scenes[scene_index];
                 (current_x, current_y) =
-                    recreate_texture_coords(window_size, new_scene.texture, y_offset);
+                    recreate_texture_coords(window_size, &new_scene.texture, y_offset);
 
                 match new_scene.what_draw {
                     WhatDraw::Hearts => {
