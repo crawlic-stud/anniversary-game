@@ -1,14 +1,13 @@
-use std::sync::Arc;
+use std::vec;
 
-use macroquad::{
-    miniquad::window::{screen_size, set_mouse_cursor},
-    prelude::*,
-    rand, text,
-};
+use macroquad::{miniquad::window::screen_size, prelude::*, rand};
 
 const WINDOW_HEIGHT: i32 = 1000;
 const WINDOW_WIDTH: i32 = 1000;
 const MAX_ROTATION: f32 = 2.0 * 3.14;
+
+const HEARTS_AMOUNT: usize = 100;
+const STARS_AMOUNT: usize = 150;
 
 struct Heart {
     x: f32,
@@ -23,14 +22,18 @@ struct Star {
     rotation: f32,
 }
 
-enum Scene {
-    First,
-    Second,
-    Third,
-    // Fourth,
-    // Fifth,
-    // Sixth,
-    // Seventh,
+enum WhatDraw {
+    Hearts,
+    Stars,
+}
+
+struct SceneConfig {
+    what_draw: WhatDraw,
+    bg_color: Color,
+    texture: Texture2D,
+    texts: Vec<&'static str>,
+    text_colors: (Color, Color),
+    colors: Vec<Color>,
 }
 
 fn window_conf() -> Conf {
@@ -44,8 +47,23 @@ fn window_conf() -> Conf {
 }
 
 fn draw_hearts(heart_texture: &Texture2D, hearts: &Vec<Heart>) {
-    for pos in hearts {
-        draw_texture(heart_texture, pos.x, pos.y, pos.color);
+    for heart in hearts {
+        draw_texture(heart_texture, heart.x, heart.y, heart.color);
+    }
+}
+
+fn draw_stars(star_texture: &Texture2D, stars: &Vec<Star>) {
+    for star in stars {
+        draw_texture_ex(
+            star_texture,
+            star.x,
+            star.y,
+            star.color,
+            DrawTextureParams {
+                rotation: star.rotation,
+                ..Default::default()
+            },
+        );
     }
 }
 
@@ -68,11 +86,22 @@ fn update_hearts_positions(hearts: &mut Vec<Heart>, heart_size: f32, window_size
     }
 }
 
-fn draw_texture_at_x_y(image_texture: &Texture2D, x: f32, y: f32, rotation: f32) {
+fn draw_texture_at_x_y(
+    image_texture: &Texture2D,
+    x: f32,
+    y: f32,
+    rotation: f32,
+    y_offset: Option<f32>,
+) {
+    let texture_y: f32;
+    match y_offset {
+        None => texture_y = y,
+        Some(offset) => texture_y = y + offset,
+    }
     draw_texture_ex(
         &image_texture,
         x,
-        y,
+        texture_y,
         Color {
             r: 1.0,
             g: 1.0,
@@ -171,84 +200,50 @@ fn draw_multiline_text_in_the_center(
     }
 }
 
-fn recreate_heart_game_variables(
+fn recreate_texture_coords(
     window_size: (f32, f32),
-    flower_texture: &Texture2D,
+    texture: &Texture2D,
     y_offset: f32,
-) -> (f32, f32, Vec<Heart>) {
-    let flower_x = (window_size.0 - flower_texture.width()) / 2.0;
-    let flower_y = (window_size.1 - flower_texture.width()) / 2.0 + y_offset;
+) -> (f32, f32) {
+    let x = (window_size.0 - texture.width()) / 2.0;
+    let y = (window_size.1 - texture.width()) / 2.0 + y_offset;
+    return (x, y);
+}
+
+fn recreate_hearts(window_size: (f32, f32), colors: &Vec<Color>) -> Vec<Heart> {
     let mut hearts = vec![];
-    for _ in 0..100 {
+    for color in colors.iter() {
         let x = rand::gen_range(0.0, window_size.0);
         let y = rand::gen_range(0.0, window_size.1);
-
-        let main_color = rand::gen_range(500.0, 1000.0) / 1000.0;
-        let other_color = rand::gen_range(0.0, main_color * 1000.0 / 5.0) / 1000.0;
 
         hearts.push(Heart {
             x,
             y,
-            color: Color {
-                r: other_color,
-                g: main_color,
-                b: other_color,
-                a: 1.0,
-            },
+            color: *color,
         })
     }
-    return (flower_x, flower_y, hearts);
+    return hearts;
 }
 
-fn recreate_star_game_variables(
-    window_size: (f32, f32),
-    present_texture: &Texture2D,
-    y_offset: f32,
-) -> (f32, f32, Vec<Star>) {
-    let present_x = (window_size.0 - present_texture.width()) / 2.0;
-    let present_y = (window_size.1 - present_texture.width()) / 2.0 + y_offset;
+fn recreate_stars(window_size: (f32, f32), colors: &Vec<Color>) -> Vec<Star> {
     let mut stars = vec![];
-    for _ in 0..150 {
+    for color in colors.iter() {
         let x = rand::gen_range(0.0, window_size.0);
         let y = rand::gen_range(0.0, window_size.1);
-
-        let main_color = rand::gen_range(800.0, 1000.0) / 1000.0;
-        let other_color = rand::gen_range(0.0, main_color * 300.0) / 1000.0;
-
         stars.push(Star {
             x,
             y,
-            color: Color {
-                r: main_color,
-                g: main_color,
-                b: other_color,
-                a: 1.0,
-            },
+            color: *color,
             rotation: rand::gen_range(0.0, MAX_ROTATION),
         })
     }
-    return (present_x, present_y, stars);
+    return stars;
 }
 
 fn get_next_font_index(fonts: &Vec<Font>, current_index: usize) -> usize {
     match fonts.get(current_index + 1) {
         None => 0,
         Some(_) => current_index + 1,
-    }
-}
-
-fn draw_stars(star_texture: &Texture2D, stars: &Vec<Star>) {
-    for star in stars {
-        draw_texture_ex(
-            star_texture,
-            star.x,
-            star.y,
-            star.color,
-            DrawTextureParams {
-                rotation: star.rotation,
-                ..Default::default()
-            },
-        );
     }
 }
 
@@ -277,9 +272,42 @@ fn update_star_positions(stars: &mut Vec<Star>, star_size: f32, window_size: (f3
     }
 }
 
-async fn game() {
-    let mut current_scene = Scene::First;
+fn generate_colors(
+    amount: usize,
+    main_color_range: (f32, f32),
+    other_color_multiplier: f32,
+    rgb_distribution: (bool, bool, bool),
+) -> Vec<Color> {
+    let mut colors: Vec<Color> = vec![];
+    for _ in 0..amount {
+        let main_color =
+            rand::gen_range(main_color_range.0, main_color_range.1) / main_color_range.1;
+        let other_color =
+            rand::gen_range(0.0, main_color * other_color_multiplier) / main_color_range.1;
 
+        colors.push(Color {
+            r: if rgb_distribution.0 {
+                main_color
+            } else {
+                other_color
+            },
+            g: if rgb_distribution.1 {
+                main_color
+            } else {
+                other_color
+            },
+            b: if rgb_distribution.2 {
+                main_color
+            } else {
+                other_color
+            },
+            a: 1.0,
+        })
+    }
+    return colors;
+}
+
+async fn game() {
     let fonts = vec![
         load_ttf_font("fonts/Swampy Clean.ttf").await.unwrap(),
         load_ttf_font("fonts/MorfinSans-Regular.ttf").await.unwrap(),
@@ -290,150 +318,127 @@ async fn game() {
     let mut window_size = screen_size();
     let rotation_step = 0.025;
 
-    let mut bg_color = Color {
-        r: 0.1,
-        g: 0.2,
-        b: 0.1,
-        a: 1.0,
-    };
     let y_offset = 150.0;
     let star_image = load_image("images/star.png").await.unwrap();
     let star_texture = Texture2D::from_image(&star_image);
     let heart_image = load_image("images/heart.png").await.unwrap();
     let heart_texture = Texture2D::from_image(&heart_image);
-    let mut flower_rotation = 0.0;
+    let mut texture_rotation = 0.0;
 
     // FIRST SCENE
     let flower_image = load_image("images/flower.png").await.unwrap();
     let flower_texture = Texture2D::from_image(&flower_image);
 
-    let (mut flower_x, mut flower_y, mut hearts) =
-        recreate_heart_game_variables(window_size, &flower_texture, y_offset);
-
     // SECOND SCENE
     let present_image = load_image("images/present.png").await.unwrap();
     let present_texture = Texture2D::from_image(&present_image);
-
-    let (mut present_x, mut present_y, mut stars) =
-        recreate_star_game_variables(window_size, &present_texture, y_offset);
 
     // THIRD SCENE
     let flower2_image = load_image("images/flower-white.png").await.unwrap();
     let flower2_texture = Texture2D::from_image(&flower2_image);
 
+    // FOURTH SCENE
+    let flower3_image = load_image("images/flower-blue.png").await.unwrap();
+    let flower3_texture = Texture2D::from_image(&flower3_image);
+
+    let mut texture_y_offset: Option<f32> = None;
+
+    let mut scene_index = 0;
+
+    let scenes = vec![
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 0.1,
+                g: 0.2,
+                b: 0.1,
+                a: 1.0,
+            },
+            texture: flower_texture.clone(),
+            texts: vec!["Азалия!", "я тебя люблю", "очень сильно!"],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Stars,
+            bg_color: Color {
+                r: 1.0,
+                g: 1.0,
+                b: 0.9,
+                a: 1.0,
+            },
+            texture: present_texture.clone(),
+            texts: vec!["У меня", "для тебя", "подарок!!!"],
+            text_colors: (BLACK, WHITE),
+            colors: generate_colors(HEARTS_AMOUNT, (900.0, 1000.0), 500.0, (true, true, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 0.7,
+                g: 0.7,
+                b: 1.0,
+                a: 1.0,
+            },
+            texture: flower2_texture.clone(),
+            texts: vec!["Но сначала я хочу", "сказать тебе", "какая ты ..."],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Stars,
+            bg_color: Color {
+                r: 0.7,
+                g: 1.0,
+                b: 1.0,
+                a: 1.0,
+            },
+            texture: flower3_texture.clone(),
+            texts: vec![
+                "Замечательная!",
+                "Умная! Красивая!",
+                "Добрая! Милая!",
+                "Гениальная!",
+                "Душещипательная!",
+            ],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, false)),
+        },
+        // SceneConfig {},
+        // SceneConfig {},
+    ];
+
+    let mut hearts: Vec<Heart> = recreate_hearts(window_size, &scenes[scene_index].colors);
+    let mut stars: Vec<Star> = recreate_stars(window_size, &scenes[scene_index].colors);
+
+    let (mut current_x, mut current_y) =
+        recreate_texture_coords(window_size, &scenes[scene_index].texture, y_offset);
+
     loop {
         let (mouse_x, mouse_y) = mouse_position();
         let current_window_size = screen_size();
 
-        clear_background(bg_color);
+        let current_scene = &scenes[scene_index];
 
-        match current_scene {
-            Scene::First => {
-                draw_hearts(&heart_texture, &hearts);
-                update_hearts_positions(&mut hearts, heart_image.width as f32, window_size);
-                draw_texture_at_x_y(&flower_texture, flower_x, flower_y, flower_rotation);
+        clear_background(current_scene.bg_color);
 
-                draw_multiline_text_in_the_center(
-                    &vec!["Азалия!", "я тебя люблю", "очень сильно!"],
-                    fonts.get(font_index).unwrap(),
-                    100,
-                    window_size,
-                    y_offset,
-                    10.0,
-                    WHITE,
-                    BLACK,
-                );
+        if (mouse_x > current_x)
+            & (mouse_y > current_y)
+            & (mouse_x < current_x + current_scene.texture.width())
+            & (mouse_y < current_y + current_scene.texture.height())
+            & is_mouse_button_pressed(MouseButton::Left)
+        {
+            let next_index = scene_index + 1;
+            if next_index < scenes.len() {
+                scene_index += 1;
+                let new_scene = &scenes[scene_index];
 
-                if (mouse_x > flower_x)
-                    & (mouse_y > flower_y)
-                    & (mouse_x < flower_x + flower_texture.width())
-                    & (mouse_y < flower_y + flower_texture.height())
-                {
-                    if is_mouse_button_pressed(MouseButton::Left) {
-                        current_scene = Scene::Second;
-                        bg_color = Color {
-                            r: 1.0,
-                            g: 1.0,
-                            b: 0.9,
-                            a: 1.0,
-                        }
+                match new_scene.what_draw {
+                    WhatDraw::Hearts => {
+                        hearts = recreate_hearts(window_size, &new_scene.colors);
                     }
-                }
-            }
-
-            Scene::Second => {
-                draw_stars(&star_texture, &stars);
-                update_star_positions(&mut stars, star_texture.width(), window_size);
-                draw_texture_at_x_y(&present_texture, present_x, present_y, 0.0);
-
-                draw_multiline_text_in_the_center(
-                    &vec!["У меня", "для тебя", "подарок!!!"],
-                    // &vec!["AAAAAA", "AAAAAAAAAAAAAA", "AAAAA"],
-                    fonts.get(font_index.to_owned()).unwrap(),
-                    100,
-                    window_size,
-                    y_offset,
-                    10.0,
-                    BLACK,
-                    WHITE,
-                );
-
-                if (mouse_x > present_x)
-                    & (mouse_y > present_y)
-                    & (mouse_x < present_x + present_texture.width())
-                    & (mouse_y < present_y + present_texture.height())
-                    & is_mouse_button_pressed(MouseButton::Left)
-                {
-                    current_scene = Scene::Third;
-                    bg_color = Color {
-                        r: 0.7,
-                        g: 0.7,
-                        b: 1.0,
-                        a: 1.0,
-                    };
-                    for heart in hearts.iter_mut() {
-                        let main_color = rand::gen_range(900.0, 1000.0) / 1000.0;
-                        let other_color = rand::gen_range(0.0, main_color * 1000.0) / 1000.0;
-
-                        heart.color = Color {
-                            r: other_color,
-                            g: other_color,
-                            b: main_color,
-                            a: 1.0,
-                        }
-                    }
-                }
-            }
-
-            Scene::Third => {
-                draw_hearts(&heart_texture, &hearts);
-                update_hearts_positions(&mut hearts, heart_image.width as f32, window_size);
-                draw_texture_at_x_y(&flower2_texture, flower_x, flower_y, flower_rotation);
-
-                draw_multiline_text_in_the_center(
-                    &vec!["Но сначала я хочу", "сказать тебе", "какая ты ..."],
-                    fonts.get(font_index).unwrap(),
-                    100,
-                    window_size,
-                    y_offset,
-                    10.0,
-                    WHITE,
-                    BLACK,
-                );
-
-                if (mouse_x > flower_x)
-                    & (mouse_y > flower_y)
-                    & (mouse_x < flower_x + flower_texture.width())
-                    & (mouse_y < flower_y + flower_texture.height())
-                {
-                    if is_mouse_button_pressed(MouseButton::Left) {
-                        current_scene = Scene::Third;
-                        bg_color = Color {
-                            r: 1.0,
-                            g: 1.0,
-                            b: 0.9,
-                            a: 1.0,
-                        }
+                    WhatDraw::Stars => {
+                        stars = recreate_stars(window_size, &new_scene.colors);
                     }
                 }
             }
@@ -441,16 +446,46 @@ async fn game() {
 
         if current_window_size != window_size {
             window_size = current_window_size;
-            (flower_x, flower_y, hearts) =
-                recreate_heart_game_variables(window_size, &flower_texture, y_offset);
-            (present_x, present_y, stars) =
-                recreate_star_game_variables(window_size, &present_texture, y_offset)
+            (current_x, current_y) =
+                recreate_texture_coords(window_size, &current_scene.texture, y_offset);
+            hearts = recreate_hearts(window_size, &current_scene.colors);
+            stars = recreate_stars(window_size, &current_scene.colors);
         }
 
-        if flower_rotation < MAX_ROTATION {
-            flower_rotation += rotation_step;
+        match &current_scene.what_draw {
+            WhatDraw::Stars => {
+                draw_stars(&star_texture, &stars);
+                update_star_positions(&mut stars, star_texture.width(), window_size);
+            }
+            WhatDraw::Hearts => {
+                draw_hearts(&heart_texture, &hearts);
+                update_hearts_positions(&mut hearts, heart_image.width as f32, window_size);
+            }
+        }
+
+        draw_multiline_text_in_the_center(
+            &current_scene.texts,
+            fonts.get(font_index).unwrap(),
+            100,
+            window_size,
+            y_offset,
+            10.0,
+            current_scene.text_colors.0,
+            current_scene.text_colors.1,
+        );
+
+        draw_texture_at_x_y(
+            &current_scene.texture,
+            current_x,
+            current_y,
+            texture_rotation,
+            texture_y_offset,
+        );
+
+        if texture_rotation < MAX_ROTATION {
+            texture_rotation += rotation_step;
         } else {
-            flower_rotation = 0.0;
+            texture_rotation = 0.0;
         }
 
         if rand::gen_range(0, 100) > 97 {
