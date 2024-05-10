@@ -341,6 +341,10 @@ async fn game() {
     let flower3_image = load_image("images/flower-blue.png").await.unwrap();
     let flower3_texture = Texture2D::from_image(&flower3_image);
 
+    // FIFTH SCENE
+    let flower4_image = load_image("images/flower-red.png").await.unwrap();
+    let flower4_texture = Texture2D::from_image(&flower4_image);
+
     let texture_y_offset: Option<f32> = None;
 
     let mut scene_index = 0;
@@ -370,7 +374,7 @@ async fn game() {
             texture: present_texture.clone(),
             texts: vec!["У меня", "для тебя", "подарок!!!"],
             text_colors: (BLACK, WHITE),
-            colors: generate_colors(HEARTS_AMOUNT, (900.0, 1000.0), 500.0, (true, true, false)),
+            colors: generate_colors(STARS_AMOUNT, (900.0, 1000.0), 500.0, (true, true, false)),
         },
         SceneConfig {
             what_draw: WhatDraw::Hearts,
@@ -402,9 +406,28 @@ async fn game() {
                 "Душещипательная!",
             ],
             text_colors: (WHITE, BLACK),
-            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, true)),
+            colors: generate_colors(STARS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, true)),
         },
-        // SceneConfig {},
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
+                g: 0.7,
+                b: 0.65,
+                a: 1.0,
+            },
+            texture: flower4_texture.clone(),
+            texts: vec![
+                "Я так рад,",
+                "что встретил тебя",
+                "и продолжаю",
+                "встречать",
+                "уже целых 2!!!",
+                "года!!!",
+            ],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (700.0, 1000.0), 200.0, (true, false, false)),
+        },
         // SceneConfig {},
     ];
 
