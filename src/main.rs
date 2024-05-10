@@ -319,7 +319,7 @@ async fn game() {
     let mut window_size = screen_size();
     let rotation_step = 0.015;
 
-    let y_offset = 200.0;
+    let y_offset = 300.0;
     let star_image = load_image("images/star.png").await.unwrap();
     let star_texture = Texture2D::from_image(&star_image);
     let heart_image = load_image("images/heart.png").await.unwrap();
