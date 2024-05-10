@@ -522,6 +522,58 @@ async fn game() {
             text_colors: (WHITE, BLACK),
             colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
         },
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
+                g: 0.3,
+                b: 0.2,
+                a: 1.0,
+            },
+            texture: Texture2D::from_image(&load_image("images/new.png").await.unwrap()),
+            texts: vec!["А знаешь, что", "мне нравится", "больше всего?.."],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
+                g: 0.3,
+                b: 0.2,
+                a: 1.0,
+            },
+            texture: Texture2D::from_image(&load_image("images/crazy1.png").await.unwrap()),
+            texts: vec!["Что мы..."],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
+                g: 0.3,
+                b: 0.2,
+                a: 1.0,
+            },
+            texture: Texture2D::from_image(&load_image("images/crazy2.png").await.unwrap()),
+            texts: vec!["C самого", "первого дня..."],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
+                g: 0.3,
+                b: 0.2,
+                a: 1.0,
+            },
+            texture: Texture2D::from_image(&load_image("images/crazy3.png").await.unwrap()),
+            texts: vec!["Не перестаем", "быть крейзиками!"],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
+        },
     ];
 
     let mut hearts: Vec<Heart> = recreate_hearts(window_size, &scenes[scene_index].colors);
