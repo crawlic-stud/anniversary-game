@@ -318,7 +318,7 @@ async fn game() {
 
     let mut font_index = 0;
     let mut window_size = screen_size();
-    let rotation_step = 0.015;
+    let rotation_step = 0.010;
 
     let y_offset = 300.0;
     let star_image = load_image("images/star.png").await.unwrap();
@@ -477,6 +477,47 @@ async fn game() {
                 "вот наша фотка",
                 "с еще совсем",
                 "давних времен:",
+            ],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
+                g: 0.3,
+                b: 0.2,
+                a: 1.0,
+            },
+            texture: Texture2D::from_image(&load_image("images/old2.png").await.unwrap()),
+            texts: vec![
+                "Или вот,",
+                "как мы ехали",
+                "в автобусе, а у",
+                "у меня еще была",
+                "эта дурацкая",
+                "прическа xD",
+            ],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
+                g: 0.3,
+                b: 0.2,
+                a: 1.0,
+            },
+            texture: Texture2D::from_image(&load_image("images/old-fav.png").await.unwrap()),
+            texts: vec![
+                "А вот этой",
+                "фоткой я",
+                "очееееень долго",
+                "любовался!",
+                "для нее у меня",
+                "специальное место",
+                "в сердечке <3",
             ],
             text_colors: (WHITE, BLACK),
             colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 500.0, (true, false, false)),
