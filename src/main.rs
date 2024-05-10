@@ -525,6 +525,13 @@ async fn game() {
             }
         }
 
+        draw_texture_at_x_y(
+            &current_scene.texture,
+            current_x,
+            current_y,
+            texture_rotation,
+            texture_y_offset,
+        );
         draw_multiline_text_in_the_center(
             &current_scene.texts,
             fonts.get(font_index).unwrap(),
@@ -534,14 +541,6 @@ async fn game() {
             10.0,
             current_scene.text_colors.0,
             current_scene.text_colors.1,
-        );
-
-        draw_texture_at_x_y(
-            &current_scene.texture,
-            current_x,
-            current_y,
-            texture_rotation,
-            texture_y_offset,
         );
 
         if texture_rotation < MAX_ROTATION {
