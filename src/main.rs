@@ -8,6 +8,7 @@ const MAX_ROTATION: f32 = 2.0 * 3.14;
 
 const HEARTS_AMOUNT: usize = 100;
 const STARS_AMOUNT: usize = 150;
+const LINES_SPACING: f32 = 15.0;
 
 struct Heart {
     x: f32,
@@ -355,8 +356,9 @@ async fn game() {
                 "Азалька!!!!!",
                 "я тебя люблю",
                 "очень сильно!",
-                "Сегодня я подготовил",
-                "для тебя сюрприз <3",
+                "Это DIGITAL",
+                "открытка для тебя",
+                "<3 <3 <3",
             ],
             text_colors: (WHITE, BLACK),
             colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, false)),
@@ -402,6 +404,9 @@ async fn game() {
                 "Добрая! Милая!",
                 "Гениальная!",
                 "Душещипательная!",
+                "Восхитительная!",
+                "Страстная!",
+                "Матурка и матурымка!!!",
             ],
             text_colors: (WHITE, BLACK),
             colors: generate_colors(STARS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, true)),
@@ -538,7 +543,7 @@ async fn game() {
             100,
             window_size,
             y_offset,
-            10.0,
+            LINES_SPACING,
             current_scene.text_colors.0,
             current_scene.text_colors.1,
         );
