@@ -341,7 +341,7 @@ async fn game() {
     let flower3_image = load_image("images/flower-blue.png").await.unwrap();
     let flower3_texture = Texture2D::from_image(&flower3_image);
 
-    let mut texture_y_offset: Option<f32> = None;
+    let texture_y_offset: Option<f32> = None;
 
     let mut scene_index = 0;
 
@@ -383,7 +383,7 @@ async fn game() {
             texture: flower2_texture.clone(),
             texts: vec!["Но сначала я хочу", "сказать тебе", "какая ты ..."],
             text_colors: (WHITE, BLACK),
-            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, false)),
+            colors: generate_colors(HEARTS_AMOUNT, (700.0, 1000.0), 1000.0, (false, false, true)),
         },
         SceneConfig {
             what_draw: WhatDraw::Stars,
@@ -402,7 +402,7 @@ async fn game() {
                 "Душещипательная!",
             ],
             text_colors: (WHITE, BLACK),
-            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, false)),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 200.0, (false, true, true)),
         },
         // SceneConfig {},
         // SceneConfig {},
