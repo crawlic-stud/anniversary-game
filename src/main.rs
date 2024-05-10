@@ -466,6 +466,19 @@ async fn game() {
             what_draw: WhatDraw::Hearts,
             bg_color: Color {
                 r: 1.0,
+                g: 0.75,
+                b: 0.7,
+                a: 1.0,
+            },
+            texture: Texture2D::from_image(&load_image("images/us.png").await.unwrap()),
+            texts: vec!["А теперь...!"],
+            text_colors: (WHITE, BLACK),
+            colors: generate_colors(HEARTS_AMOUNT, (500.0, 1000.0), 100.0, (true, false, false)),
+        },
+        SceneConfig {
+            what_draw: WhatDraw::Hearts,
+            bg_color: Color {
+                r: 1.0,
                 g: 0.7,
                 b: 0.65,
                 a: 1.0,
