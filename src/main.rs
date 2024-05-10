@@ -9,6 +9,7 @@ const MAX_ROTATION: f32 = 2.0 * 3.14;
 const HEARTS_AMOUNT: usize = 100;
 const STARS_AMOUNT: usize = 150;
 const LINES_SPACING: f32 = 15.0;
+const TEXT_SIZE: u16 = 90;
 
 struct Heart {
     x: f32,
@@ -543,7 +544,7 @@ async fn game() {
         draw_multiline_text_in_the_center(
             &current_scene.texts,
             fonts.get(font_index).unwrap(),
-            100,
+            TEXT_SIZE,
             window_size,
             y_offset,
             LINES_SPACING,
